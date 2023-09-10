@@ -1,1 +1,0 @@
-/usr/bin/gcc -g -rdynamic CMakeFiles/threads.dir/threads.c.o CMakeFiles/threads.dir/__/deps/tinycthread.c.o CMakeFiles/threads.dir/__/deps/glad.c.o -o threads  ../src/libglfw3.a -lm -Wl,-Bstatic -lrt -Wl,-Bdynamic -ldl -lX11 

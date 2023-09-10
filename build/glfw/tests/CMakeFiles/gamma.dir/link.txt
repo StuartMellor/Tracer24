@@ -1,1 +1,0 @@
-/usr/bin/gcc -g -rdynamic CMakeFiles/gamma.dir/gamma.c.o CMakeFiles/gamma.dir/__/deps/glad.c.o -o gamma  ../src/libglfw3.a -lm -Wl,-Bstatic -lrt -Wl,-Bdynamic -lm -ldl -lX11 

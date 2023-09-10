@@ -1,2 +1,0 @@
-/usr/bin/ar qc ../lib/libglewmxd.a CMakeFiles/libglewmx_static.dir/src/glew.c.o
-/usr/bin/ranlib ../lib/libglewmxd.a

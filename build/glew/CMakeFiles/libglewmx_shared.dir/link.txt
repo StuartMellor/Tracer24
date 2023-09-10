@@ -1,0 +1,1 @@
+/usr/bin/gcc -fPIC -g -shared -Wl,-soname,libglewmxd.so -o ../lib/libglewmxd.so CMakeFiles/libglewmx_shared.dir/src/glew.c.o  -lGL -lX11 -ldl -lXext 

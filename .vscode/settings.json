@@ -1,0 +1,12 @@
+{
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "[cpp]": {
+        "editor.tabSize": 4
+    },
+    "[c]": {
+        "editor.tabSize": 4
+    },
+    "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, IndentWidth: 4, ColumnLimit: 0}"
+}
+

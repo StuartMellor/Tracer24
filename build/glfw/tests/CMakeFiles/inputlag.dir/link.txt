@@ -1,0 +1,1 @@
+/usr/bin/gcc -g -rdynamic CMakeFiles/inputlag.dir/inputlag.c.o CMakeFiles/inputlag.dir/__/deps/getopt.c.o CMakeFiles/inputlag.dir/__/deps/glad.c.o -o inputlag  ../src/libglfw3.a -lm -Wl,-Bstatic -lrt -Wl,-Bdynamic -lm -ldl -lX11 

@@ -1,9 +1,15 @@
+#include "core/ui/Grid.h"
+#include "utils/types.h"
+
 class App {
    public:
-    App(const int& status) : m_status(status){};
+    App(Tracer::TracerStatusCode* status) : m_status(status){};
     ~App();
     int run();
 
    private:
-    int m_status;
+    Tracer::TracerStatusCode* m_status;
+    void render();
+    void init();
+    Tracer::ui::Grid m_grid;
 };

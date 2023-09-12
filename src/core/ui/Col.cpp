@@ -1,11 +1,11 @@
-#include "Cell.h"
+#include "core/ui/Col.h"
 
-class Col {
-   public:
-    Col(const* int rows) : m_rows(rows){};
-    void render();
+#include "imgui.h"
 
-   private:
-    int m_rows;
-    bool isFocused = false;
-};
+void Tracer::ui::Col::render() {
+    ImGui::BeginGroup();
+    for (Cell cell : m_cells) {
+        cell.render();
+    }
+    ImGui::EndGroup();
+}

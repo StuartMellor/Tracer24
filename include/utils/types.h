@@ -1,5 +1,15 @@
+#ifndef TRACER_TYPES
+#define TRACER_TYPES
+
 #include <string>
 #include <vector>
+
+namespace Tracer {
+
+struct CellData {
+    // identifier and value
+    unsigned char iv[2][5];
+};
 
 struct TracerData {
     int rows;
@@ -8,11 +18,6 @@ struct TracerData {
     std::vector<std::vector<CellData>> cellData;
     std::string fileName;
     time_t lastModified;
-};
-
-struct CellData {
-    // identifier and value
-    unsigned char iv[2][5];
 };
 
 enum TracerStatusCode {
@@ -34,3 +39,6 @@ struct Action {
     std::string fileName;
     time_t lastModified;
 };
+}  // namespace Tracer
+
+#endif  // !TRACER_TYPES

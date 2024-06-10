@@ -1,9 +1,6 @@
 
 #include "App.h"
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
 #include <chrono>
 #include <iostream>
 #include <thread>
@@ -31,14 +28,46 @@ App::~App(){};
 // }
 
 void App::render() {
-    m_grid.render();
+    m_grid.render(m_cursorPos);
 }
 
 void App::init() {
-    m_grid = Tracer::ui::Grid(16, 5);
+    m_settings = Tracer::config::Settings();
+    m_grid = Tracer::ui::Grid(m_settings.getSteps(), m_settings.getTracks());
+    m_input = Tracer::utils::Input();
+}
+
+void App::moveCursor(int colMove, int rowMove) {
+    const int newColPos = m_cursorPos.col + colMove;
+    const int newRowPos = m_cursorPos.row + rowMove;
+    if (newColPos >= m_grid.getCols() || newColPos < 0) {
+        return;
+    }
+
+    if (newRowPos >= m_grid.getRows()) {
+        m_cursorPos.row = 0;
+        return;
+    }
+    if (newRowPos < 0) {
+        m_cursorPos.row = m_grid.getRows() - 1;
+        return;
+    };
+
+    m_cursorPos.col = newColPos;
+    m_cursorPos.row = newRowPos;
+};
+
+void App::HandleUtilKeyPress(int key, int action) {
+    if (key == GLFW_KEY_ENTER) {
+        if (action == GLFW_PRESS) {
+            m_grid.toggleCell(m_cursorPos.col, m_cursorPos.row);
+        }
+    }
 }
 
 int App::run() {
+    std::cout << "Starting Tracer...";
+    init();
     GLFWwindow *window;
 
     /* Initialize the library */
@@ -49,14 +78,17 @@ int App::run() {
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
     if (!window) {
         glfwTerminate();
+        std::cerr << "Glfw init fail";
         return -1;
     }
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
-    if (glewInit() != GLEW_OK)
+    if (glewInit() != GLEW_OK) {
         std::cerr << "Glew init fail";
+        return -1;
+    }
 
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
@@ -76,28 +108,14 @@ int App::run() {
         // Begin a fullscreen ImGui window
         int win_width, win_height;
         glfwGetWindowSize(window, &win_width, &win_height);
-        ImGui::SetNextWindowSize(ImVec2(win_width, win_height), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(static_cast<float>(win_width), static_cast<float>(win_height)), ImGuiCond_Always);
 
         ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
         ImGui::Begin("Fullscreen", NULL,
                      ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
                          ImGuiWindowFlags_NoMove |
                          ImGuiWindowFlags_NoBringToFrontOnFocus);
-
-        // Create a Menu
-        if (ImGui::BeginMainMenuBar()) {
-            if (ImGui::BeginMenu("File")) {
-                if (ImGui::MenuItem("Open", "Ctrl+O")) {
-                    // Handle File Open
-                }
-                if (ImGui::MenuItem("Save", "Ctrl+S")) {
-                    // Handle File Save
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMainMenuBar();
-        }
-
+        m_input.listenForInput(window, [&](int x, int y) { moveCursor(x, y); }, [&](int key) { HandleUtilKeyPress(key, GLFW_PRESS); });
         render();
 
         ImGui::End();  // End of fullscreen window

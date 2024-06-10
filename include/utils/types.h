@@ -6,6 +6,12 @@
 
 namespace Tracer {
 
+struct CursorPos {
+    int row;
+    int col;
+    int sub;
+};
+
 struct CellData {
     // identifier and value
     unsigned char iv[2][5];

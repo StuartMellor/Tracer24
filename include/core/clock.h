@@ -9,7 +9,7 @@
 
 class Clock {
    public:
-    Clock(int cols, int steps, float tempo) : m_cols(cols), m_tempo(120.0f), m_steps(16), m_currentStep(0), running(true) {
+    Clock(int cols, int steps, float tempo) : m_cols(cols), m_steps(steps), m_tempo(tempo) {
         changeTempo(m_tempo);
     }
 
@@ -86,12 +86,12 @@ class Clock {
         }
     }
 
-    bool running;
     int m_cols;  // I assumed this variable is a class member, representing the number of columns
     int m_steps;
     float m_tempo;
     int m_currentStep = 0;
     float m_tempoMs;
+    bool running = false;
     std::thread clockThread;
     std::vector<std::thread> workerThreads;
     std::mutex mutex;

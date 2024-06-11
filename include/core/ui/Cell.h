@@ -16,7 +16,7 @@ class Cell {
             m_cellBlocks.push_back(Tracer::ui::CellBlock());
         }
     }
-    void render(const bool colSelected, const bool rowSelected, const CursorPos& cursorPos, const bool cellRowSelected, const int cellCol);
+    void render(const bool colSelected, const bool rowSelected, const CursorPos& cursorPos, const bool cellBeingEdited);
     void select();
 
    private:

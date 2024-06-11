@@ -7,8 +7,8 @@
 namespace Tracer {
 
 struct CursorPos {
-    int row;
     int col;
+    int row;
     int sub;
 };
 

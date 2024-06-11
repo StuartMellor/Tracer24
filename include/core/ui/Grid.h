@@ -17,15 +17,7 @@ class Grid {
     void render(const CursorPos& cursorPos);
     int getRows() const { return m_rows; }
     int getCols() const { return m_cols; }
-    void toggleCell(const int& row, const int& col) {
-        if (m_selectedCol == row && m_selectedRow == col) {
-            m_selectedCol = -1;
-            m_selectedRow = -1;
-            return;
-        }
-        m_selectedCol = col;
-        m_selectedRow = row;
-    }
+    void toggleCell(const int& row, const int& col);
 
    private:
     int m_rows = 16;

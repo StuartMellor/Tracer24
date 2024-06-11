@@ -7,7 +7,7 @@ namespace ui {
 class CellBlock {
    public:
     CellBlock(){};
-    void render(bool beingEdited);
+    void render(bool cursorOver, bool beingEdited);
 
    private:
     bool m_beingEdited = false;

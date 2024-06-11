@@ -1,4 +1,3 @@
-
 #include "App.h"
 
 #include <chrono>
@@ -6,6 +5,7 @@
 #include <thread>
 
 #include "core/clock.h"
+#include "core/events/KeyboardEvent.h"
 #include "core/ui/Grid.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -15,17 +15,7 @@
 
 const char *glsl_version = "#version 130";
 
-App::~App(){};
-
-// int App::run() {
-//     // start clo
-//     // Clock clockSystem(10, 4, 120.00);  // Assuming '4' as an arbitrary number of columns
-//     // clockSystem.start();
-//     // std::this_thread::sleep_for(std::chrono::seconds(10));
-//     // *m_status = Tracer::TracerStatusCode::EXIT;
-
-//     return 0;
-// }
+App::~App() {}
 
 void App::render() {
     m_grid.render(m_cursorPos);
@@ -35,6 +25,13 @@ void App::init() {
     m_settings = Tracer::config::Settings();
     m_grid = Tracer::ui::Grid(m_settings.getSteps(), m_settings.getTracks());
     m_input = Tracer::utils::Input();
+
+    // Registering callbacks with the dispatcher
+    dispatcher.registerCallback(GLFW_KEY_LEFT, [this](int key, int scancode, int action, int mods) { HandleKeyInput(key, scancode, action, mods); });
+    dispatcher.registerCallback(GLFW_KEY_RIGHT, [this](int key, int scancode, int action, int mods) { HandleKeyInput(key, scancode, action, mods); });
+    dispatcher.registerCallback(GLFW_KEY_UP, [this](int key, int scancode, int action, int mods) { HandleKeyInput(key, scancode, action, mods); });
+    dispatcher.registerCallback(GLFW_KEY_DOWN, [this](int key, int scancode, int action, int mods) { HandleKeyInput(key, scancode, action, mods); });
+    dispatcher.registerCallback(GLFW_KEY_ENTER, [this](int key, int scancode, int action, int mods) { HandleUtilKeyPress(key, scancode, action, mods); });
 }
 
 void App::moveCursor(int colMove, int rowMove) {
@@ -51,17 +48,34 @@ void App::moveCursor(int colMove, int rowMove) {
     if (newRowPos < 0) {
         m_cursorPos.row = m_grid.getRows() - 1;
         return;
-    };
+    }
 
     m_cursorPos.col = newColPos;
     m_cursorPos.row = newRowPos;
-};
+}
 
-void App::HandleUtilKeyPress(int key, int action) {
+void App::HandleUtilKeyPress(int key, int scancode, int action, int mods) {
+    std::cout << "Key pressed: " << key << "," << scancode << ", " << mods << std::endl;
     if (key == GLFW_KEY_ENTER) {
         if (action == GLFW_PRESS) {
-            m_grid.toggleCell(m_cursorPos.col, m_cursorPos.row);
+            m_grid.toggleCell(m_cursorPos.row, m_cursorPos.col);
         }
+    }
+}
+
+void App::HandleKeyInput(int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT || key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) {
+        if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+            int colMove = 0;
+            int rowMove = 0;
+            if (key == GLFW_KEY_LEFT) colMove = -1;
+            if (key == GLFW_KEY_RIGHT) colMove = 1;
+            if (key == GLFW_KEY_UP) rowMove = -1;
+            if (key == GLFW_KEY_DOWN) rowMove = 1;
+            moveCursor(colMove, rowMove);
+        }
+    } else {
+        HandleUtilKeyPress(key, scancode, action, mods);
     }
 }
 
@@ -70,11 +84,9 @@ int App::run() {
     init();
     GLFWwindow *window;
 
-    /* Initialize the library */
     if (!glfwInit())
         return -1;
 
-    /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
     if (!window) {
         glfwTerminate();
@@ -82,7 +94,6 @@ int App::run() {
         return -1;
     }
 
-    /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
     if (glewInit() != GLEW_OK) {
@@ -90,13 +101,15 @@ int App::run() {
         return -1;
     }
 
+    glfwSetWindowUserPointer(window, this);
+    glfwSetKeyCallback(window, Tracer::events::KeyboardEvent::key_callback);
+
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     ImVec4 clear_color = ImColor(0x49, 0xA6, 0x95);
-    /* Loop until the user closes the window */
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -105,20 +118,15 @@ int App::run() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // Begin a fullscreen ImGui window
         int win_width, win_height;
         glfwGetWindowSize(window, &win_width, &win_height);
         ImGui::SetNextWindowSize(ImVec2(static_cast<float>(win_width), static_cast<float>(win_height)), ImGuiCond_Always);
 
         ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-        ImGui::Begin("Fullscreen", NULL,
-                     ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
-                         ImGuiWindowFlags_NoMove |
-                         ImGuiWindowFlags_NoBringToFrontOnFocus);
-        m_input.listenForInput(window, [&](int x, int y) { moveCursor(x, y); }, [&](int key) { HandleUtilKeyPress(key, GLFW_PRESS); });
+        ImGui::Begin("Fullscreen", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus);
         render();
 
-        ImGui::End();  // End of fullscreen window
+        ImGui::End();
 
         ImGui::Render();
         int display_w, display_h;

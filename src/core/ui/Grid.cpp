@@ -20,3 +20,17 @@ void Tracer::ui::Grid::render(const CursorPos& cursorPos) {
         ImGui::EndTable();
     }
 };
+
+void Tracer::ui::Grid::toggleCell(const int& row, const int& col) {
+    {
+        if (m_selectedRow == row && m_selectedCol == col) {
+            m_selectedCol = -1;
+            m_selectedRow = -1;
+            std::cout << "Deselecting cell: " << row << "," << col << std::endl;
+            return;
+        }
+        std::cout << "Selecting cell: " << row << ":" << m_selectedRow << "," << col << ":" << m_selectedCol << std::endl;
+        m_selectedCol = col;
+        m_selectedRow = row;
+    }
+}

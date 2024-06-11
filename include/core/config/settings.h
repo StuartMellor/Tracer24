@@ -13,7 +13,7 @@ class Settings {
 
    private:
     int m_nTracks = 4;
-    int m_steps = 128;
+    int m_steps = 64;
     int m_subTracks = 3;
 };
 }  // namespace config

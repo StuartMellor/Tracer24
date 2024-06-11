@@ -27,6 +27,7 @@ class App {
     Tracer::ui::Grid m_grid;
     Tracer::GridState gridState;
     Tracer::CursorPos m_cursorPos;
+    bool shiftPressed = false;
 
    private:
     Tracer::TracerStatusCode* m_status;

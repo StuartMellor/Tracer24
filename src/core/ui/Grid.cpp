@@ -23,9 +23,7 @@ void Tracer::ui::Grid::toggleCell(GridState& gridState, int row, int col) {
     if (gridState.selectedRow == row && gridState.selectedCol == col) {
         gridState.selectedCol = -1;
         gridState.selectedRow = -1;
-        std::cout << "Deselecting cell: " << row << "," << col << std::endl;
     } else {
-        std::cout << "Selecting cell: " << row << "," << col << std::endl;
         gridState.selectedCol = col;
         gridState.selectedRow = row;
     }

@@ -10,7 +10,7 @@ void Tracer::ui::Cell::render(const CellState& cellState, const CursorPos& curso
     ImGui::BeginGroup();
     for (size_t i = 0; i < m_cellBlocks.size(); ++i) {
         bool isBlockActive = static_cast<size_t>(cursorPos.sub) == i && cellState.isBeingEdited;
-        m_cellBlocks[i].render(cellState.isFocused, cellState.isBeingEdited, isBlockActive);
+        m_cellBlocks[i].render(cellState.isFocused, isBlockActive, cellState.isBeingEdited);
     }
     ImGui::EndGroup();
 }

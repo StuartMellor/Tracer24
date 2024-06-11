@@ -13,7 +13,6 @@ struct CursorPos {
 };
 
 struct CellData {
-    // identifier and value
     unsigned char iv[2][5];
 };
 
@@ -29,6 +28,7 @@ struct TracerData {
     std::vector<std::vector<CellData>> cellData;
     std::string fileName;
     time_t lastModified;
+    bool shiftPressed = false;
 };
 
 enum TracerStatusCode {

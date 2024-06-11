@@ -10,14 +10,14 @@ void Tracer::ui::CellBlock::render(bool isFocused, bool isBeingEdited, bool isRo
     if (isBeingEdited) {
         auto now = std::chrono::steady_clock::now();
         auto time = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
-        float alpha = 10 * sin(time * 0.01);
+        float alpha = sinf(time * 0.01f) * 0.1f + 0.7f;
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.0f, 1.0f, alpha));
-        ImGui::Button("++", boxSize);
+        ImGui::Button("--", boxSize);
         ImGui::PopStyleColor();
-    } else if (isFocused) {
+    } else if (isFocused && !isRowActive) {
         auto now = std::chrono::steady_clock::now();
         auto time = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
-        float alpha = 10.0f * sin(time * 0.005) - 4.0f;
+        float alpha = sinf(time * 0.007f) * 0.1f + 0.6f;
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
         ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, alpha));
         ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);

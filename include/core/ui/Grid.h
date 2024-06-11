@@ -3,30 +3,37 @@
 
 #include <vector>
 
-#include "Row.h"
+#include "core/ui/Row.h"
+#include "utils/types.h"
+
 namespace Tracer {
 namespace ui {
+
 class Grid {
    public:
-    Grid(const int& rows, const int& cols) : m_rows(rows), m_cols(cols) {
-        // initialise m_colData with Col which declares Col(rows, index)
-        for (int i = 0; i < m_rows; i++) {
-            m_rowData.push_back(Row(m_cols, i));
+    Grid(int rows, int cols, int subCols)
+        : m_rows(rows), m_cols(cols), m_subCols(subCols) {
+        for (int i = 0; i < m_rows; ++i) {
+            m_rowData.emplace_back(m_cols, i, m_subCols);
         }
     };
-    void render(const CursorPos& cursorPos);
+
+    void render(const CursorPos& cursorPos, GridState& gridState);
+    void toggleCell(GridState& gridState, int row, int col);
+    bool cellToggled(const GridState& gridState) const;
+
     int getRows() const { return m_rows; }
     int getCols() const { return m_cols; }
-    void toggleCell(const int& row, const int& col);
+    int getSubCols() const { return m_subCols; }
 
    private:
-    int m_rows = 16;
-    int m_cols = 4;
+    int m_rows;
+    int m_cols;
+    int m_subCols;
     std::vector<Row> m_rowData;
-    int m_selectedRow = -1;
-    int m_selectedCol = -1;
 };
+
 }  // namespace ui
 }  // namespace Tracer
 
-#endif  // !TRACER_UI_GRID_H
+#endif  // TRACER_UI_GRID_H

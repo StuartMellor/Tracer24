@@ -6,24 +6,25 @@
 
 #include "core/clock.h"
 #include "core/events/KeyboardEvent.h"
-#include "core/ui/Grid.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "imgui_internal.h"
-#include "utils/types.h"
 
 const char *glsl_version = "#version 130";
+
+App::App(Tracer::TracerStatusCode *status)
+    : m_status(status), m_grid(Tracer::ui::Grid(16, 4, 3)), m_cursorPos({0, 0, 0}), dispatcher() {}
 
 App::~App() {}
 
 void App::render() {
-    m_grid.render(m_cursorPos);
+    m_grid.render(m_cursorPos, gridState);
 }
 
 void App::init() {
     m_settings = Tracer::config::Settings();
-    m_grid = Tracer::ui::Grid(m_settings.getSteps(), m_settings.getTracks());
+    m_grid = Tracer::ui::Grid(m_settings.getSteps(), m_settings.getTracks(), m_settings.getSubTracks());
     m_input = Tracer::utils::Input();
 
     // Registering callbacks with the dispatcher
@@ -34,31 +35,11 @@ void App::init() {
     dispatcher.registerCallback(GLFW_KEY_ENTER, [this](int key, int scancode, int action, int mods) { HandleUtilKeyPress(key, scancode, action, mods); });
 }
 
-void App::moveCursor(int colMove, int rowMove) {
-    const int newColPos = m_cursorPos.col + colMove;
-    const int newRowPos = m_cursorPos.row + rowMove;
-    if (newColPos >= m_grid.getCols() || newColPos < 0) {
-        return;
-    }
-
-    if (newRowPos >= m_grid.getRows()) {
-        m_cursorPos.row = 0;
-        return;
-    }
-    if (newRowPos < 0) {
-        m_cursorPos.row = m_grid.getRows() - 1;
-        return;
-    }
-
-    m_cursorPos.col = newColPos;
-    m_cursorPos.row = newRowPos;
-}
-
 void App::HandleUtilKeyPress(int key, int scancode, int action, int mods) {
     std::cout << "Key pressed: " << key << "," << scancode << ", " << mods << std::endl;
     if (key == GLFW_KEY_ENTER) {
         if (action == GLFW_PRESS) {
-            m_grid.toggleCell(m_cursorPos.row, m_cursorPos.col);
+            m_grid.toggleCell(gridState, m_cursorPos.row, m_cursorPos.col);
         }
     }
 }
@@ -77,6 +58,73 @@ void App::HandleKeyInput(int key, int scancode, int action, int mods) {
     } else {
         HandleUtilKeyPress(key, scancode, action, mods);
     }
+}
+
+void App::moveCursor(int colMove, int rowMove) {
+    if (m_grid.cellToggled(gridState)) {
+        const int maxSubCols = m_grid.getSubCols();
+        const int newSubColPos = m_cursorPos.sub + colMove;
+
+        if (newSubColPos >= maxSubCols) {
+            m_cursorPos.sub = 0;
+            const int newColPos = m_cursorPos.col + 1;
+            if (newColPos >= m_grid.getCols()) {
+                return;
+            }
+            m_cursorPos.col = newColPos;
+            m_grid.toggleCell(gridState, m_cursorPos.row, m_cursorPos.col);
+            return;
+        }
+
+        if (newSubColPos < 0) {
+            m_cursorPos.sub = maxSubCols - 1;
+            const int newColPos = m_cursorPos.col - 1;
+            if (newColPos < 0) {
+                return;
+            }
+            m_cursorPos.col = newColPos;
+            m_grid.toggleCell(gridState, m_cursorPos.row, m_cursorPos.col);
+            return;
+        }
+
+        m_cursorPos.sub = newSubColPos;
+
+        const int newRowPos = m_cursorPos.row + rowMove;
+
+        if (newRowPos >= m_grid.getRows()) {
+            m_cursorPos.row = 0;
+            m_grid.toggleCell(gridState, m_cursorPos.row, m_cursorPos.col);
+            return;
+        }
+
+        if (newRowPos < 0) {
+            m_cursorPos.row = m_grid.getRows() - 1;
+            m_grid.toggleCell(gridState, m_cursorPos.row, m_cursorPos.col);
+            return;
+        }
+
+        m_cursorPos.row = newRowPos;
+        m_grid.toggleCell(gridState, m_cursorPos.row, m_cursorPos.col);
+        return;
+    }
+
+    const int newColPos = m_cursorPos.col + colMove;
+    const int newRowPos = m_cursorPos.row + rowMove;
+    if (newColPos >= m_grid.getCols() || newColPos < 0) {
+        return;
+    }
+
+    if (newRowPos >= m_grid.getRows()) {
+        m_cursorPos.row = 0;
+        return;
+    }
+    if (newRowPos < 0) {
+        m_cursorPos.row = m_grid.getRows() - 1;
+        return;
+    }
+
+    m_cursorPos.col = newColPos;
+    m_cursorPos.row = newRowPos;
 }
 
 int App::run() {
@@ -145,4 +193,4 @@ int App::run() {
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
-}
+};

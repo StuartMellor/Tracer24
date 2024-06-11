@@ -1,34 +1,37 @@
-#ifndef TRACER_CELL_H
-#define TRACER_CELL_H
+#ifndef TRACER_UI_CELL_H
+#define TRACER_UI_CELL_H
 
 #include <vector>
 
-#include "core/ui/CellBlock.h"
+#include "CellBlock.h"
+#include "imgui.h"
 #include "utils/types.h"
 
 namespace Tracer {
 namespace ui {
 
+struct CellState {
+    bool isFocused = false;
+    bool isBeingEdited = false;
+};
+
 class Cell {
    public:
-    Cell(const int& NModTracks, const int& colId) : m_NModTracks(NModTracks), m_colId(colId) {
-        for (int i = 0; i < m_NModTracks; i++) {
-            m_cellBlocks.push_back(Tracer::ui::CellBlock());
+    Cell(int numCellBlocks, int cellIndex)
+        : m_cellIndex(cellIndex) {
+        for (int i = 0; i < numCellBlocks; ++i) {
+            m_cellBlocks.emplace_back();
         }
     }
-    void render(const bool colSelected, const bool rowSelected, const CursorPos& cursorPos, const bool cellBeingEdited);
-    void select();
+
+    void render(const CellState& cellState, const CursorPos& cursorPos);
 
    private:
-    bool m_isFocused = false;
-    bool m_disabled = false;
-    bool m_isActive = false;
-    int m_selectedCellBlock = -1;
-    int m_NModTracks = 3;
-    std::vector<Tracer::ui::CellBlock> m_cellBlocks;
-    int m_colId = -1;
+    int m_cellIndex;
+    std::vector<CellBlock> m_cellBlocks;
 };
+
 }  // namespace ui
 }  // namespace Tracer
 
-#endif  // !TRACER_CELL_H
+#endif  // TRACER_UI_CELL_H

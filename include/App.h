@@ -12,27 +12,31 @@
 
 class App {
    public:
-    App(Tracer::TracerStatusCode* status) : m_status(status), m_grid(Tracer::ui::Grid(16, 4)), dispatcher(){};
+    App(Tracer::TracerStatusCode* status);
     ~App();
     int run();
     Tracer::config::Settings m_settings;
 
-    // Getter for the event dispatcher
-    Tracer::events::EventDispatcher& getDispatcher() { return dispatcher; }
+    Tracer::events::EventDispatcher& getDispatcher() {
+        return dispatcher;
+    };
+
+    void moveCursor(int colMove, int rowMove);
+
+   public:
+    Tracer::ui::Grid m_grid;
+    Tracer::GridState gridState;
+    Tracer::CursorPos m_cursorPos;
 
    private:
     Tracer::TracerStatusCode* m_status;
     void render();
     void init();
-    void moveCursor(int colMove, int rowMove);
     void HandleUtilKeyPress(int key, int scancode, int action, int mods);
     void HandleKeyInput(int key, int scancode, int action, int mods);
 
-    Tracer::ui::Grid m_grid;
-    Tracer::CursorPos m_cursorPos = {0, 0};
     Tracer::utils::Input m_input;
 
-    // Event dispatcher instance
     Tracer::events::EventDispatcher dispatcher;
 };
 

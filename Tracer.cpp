@@ -1,6 +1,8 @@
 #include "App.h"
+#include "utils/types.h"
 
-int main(void) {
-    Tracer::TracerStatusCode appStatus;
-    return App(&appStatus).run();
-};
+int main() {
+    Tracer::TracerStatusCode status;
+    App app(&status);
+    return app.run();
+}

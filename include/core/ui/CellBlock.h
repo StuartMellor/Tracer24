@@ -1,18 +1,19 @@
 #ifndef TRACER_CELL_BLOCK_H
 #define TRACER_CELL_BLOCK_H
-#include <iostream>
 
 namespace Tracer {
 namespace ui {
+
 class CellBlock {
    public:
-    CellBlock(){};
-    void render(bool cursorOver, bool beingEdited);
+    CellBlock() = default;
+    void render(bool isFocused, bool isBeingEdited, bool isRowActive);
 
    private:
-    bool m_beingEdited = false;
+    bool m_isBeingEdited = false;
 };
+
 }  // namespace ui
 }  // namespace Tracer
 
-#endif  // !TRACER_CELL_BLOCK_H
+#endif  // TRACER_CELL_BLOCK_H

@@ -17,6 +17,11 @@ struct CellData {
     unsigned char iv[2][5];
 };
 
+struct GridState {
+    int selectedRow = -1;
+    int selectedCol = -1;
+};
+
 struct TracerData {
     int rows;
     int cols;

@@ -6,10 +6,11 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h"
 
-void Tracer::ui::Cell::render(const bool colSelected, const bool rowSelected, const CursorPos& cursorPos, const bool cellBeingEdited) {
+void Tracer::ui::Cell::render(const CellState& cellState, const CursorPos& cursorPos) {
     ImGui::BeginGroup();
-    for (size_t i = 0; i < Tracer::ui::Cell::m_cellBlocks.size(); ++i) {
-        m_cellBlocks[i].render(colSelected && rowSelected, static_cast<size_t>(cursorPos.sub) == i && cellBeingEdited);
+    for (size_t i = 0; i < m_cellBlocks.size(); ++i) {
+        bool isBlockActive = static_cast<size_t>(cursorPos.sub) == i && cellState.isBeingEdited;
+        m_cellBlocks[i].render(cellState.isFocused, cellState.isBeingEdited, isBlockActive);
     }
     ImGui::EndGroup();
-};
+}

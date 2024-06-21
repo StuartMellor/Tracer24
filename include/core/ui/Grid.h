@@ -11,10 +11,10 @@ namespace ui {
 
 class Grid {
    public:
-    Grid(int rows, int cols, int subCols)
-        : m_rows(rows), m_cols(cols), m_subCols(subCols) {
-        for (int i = 0; i < m_rows; ++i) {
-            m_rowData.emplace_back(m_cols, i, m_subCols);
+    Grid(const Tracer::TracerData& TracerData)
+        : m_tracerData(const_cast<Tracer::TracerData*>(&TracerData)) {
+        for (int i = 0; i < m_tracerData->rows; ++i) {
+            m_rowUI.emplace_back(m_tracerData->cols, i, m_tracerData->subCols);
         }
     };
 
@@ -22,15 +22,13 @@ class Grid {
     void toggleCell(GridState& gridState, int row, int col);
     bool cellToggled(const GridState& gridState) const;
 
-    int getRows() const { return m_rows; }
-    int getCols() const { return m_cols; }
-    int getSubCols() const { return m_subCols; }
+    int getRows() const { return m_tracerData->rows; }
+    int getCols() const { return m_tracerData->cols; }
+    int getSubCols() const { return m_tracerData->subCols; }
 
    private:
-    int m_rows;
-    int m_cols;
-    int m_subCols;
-    std::vector<Row> m_rowData;
+    std::vector<Row> m_rowUI;
+    Tracer::TracerData* m_tracerData;
 };
 
 }  // namespace ui

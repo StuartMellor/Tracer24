@@ -16,16 +16,20 @@ struct CellData {
     unsigned char iv[2][5];
 };
 
+struct RowData {
+    std::vector<CellData> cells;
+};
+
 struct GridState {
     int selectedRow = -1;
     int selectedCol = -1;
 };
 
 struct TracerData {
-    int rows;
-    int cols;
-    int cursor[2];
-    std::vector<std::vector<CellData>> cellData;
+    int rows = 16;
+    int cols = 4;
+    int subCols = 3;
+    std::vector<RowData> cellData;
     std::string fileName;
     time_t lastModified;
     bool shiftPressed = false;

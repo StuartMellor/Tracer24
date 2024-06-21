@@ -12,7 +12,7 @@
 
 class App {
    public:
-    App(Tracer::TracerStatusCode* status);
+    App(Tracer::TracerStatusCode* status) : dispatcher(), m_settings(), m_cursorPos() {}
     ~App();
     int run();
     Tracer::config::Settings m_settings;
@@ -24,9 +24,9 @@ class App {
     void moveCursor(int colMove, int rowMove);
 
    public:
-    Tracer::ui::Grid m_grid;
-    Tracer::GridState gridState;
     Tracer::CursorPos m_cursorPos;
+    Tracer::ui::Grid m_grid = Tracer::ui::Grid(Tracer::TracerData());
+    Tracer::GridState gridState;
     bool shiftPressed = false;
 
    private:

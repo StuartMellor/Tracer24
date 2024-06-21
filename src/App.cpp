@@ -14,7 +14,7 @@
 const char *glsl_version = "#version 130";
 
 App::App(Tracer::TracerStatusCode *status)
-    : m_status(status), m_grid(Tracer::ui::Grid(16, 4, 3)), m_cursorPos({0, 0, 0}), dispatcher() {}
+    : dispatcher(), m_status(status), m_cursorPos({0, 0, 0}) {}
 
 App::~App() {}
 
@@ -24,7 +24,8 @@ void App::render() {
 
 void App::init() {
     m_settings = Tracer::config::Settings();
-    m_grid = Tracer::ui::Grid(m_settings.getSteps(), m_settings.getTracks(), m_settings.getSubTracks());
+    Tracer::TracerData tracerData = Tracer::TracerData();
+    m_grid = Tracer::ui::Grid(tracerData);
     m_input = Tracer::utils::Input();
 
     // Registering callbacks with the dispatcher

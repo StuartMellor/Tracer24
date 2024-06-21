@@ -1,43 +1,68 @@
-[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+# Tracker App
 
-# OpenGL Boilerplate
-Project containing all basic dependencies for opengl (GLFW,GLEW,GLM,IMGUI)
+![Tracker App](https://img.shields.io/badge/Status-Active-green) ![C++](https://img.shields.io/badge/Language-C%2B%2B-blue) ![ImGui](https://img.shields.io/badge/UI-ImGui-orange)
 
-## Getting Started
-to clone this project it is *NECESSARY* to use the `--recursive` flag
+A brief description of what the Tracker App does. This could be a tool for tracking various items, activities, or metrics with a user-friendly interface built using ImGui.
 
+## Table of Contents
 
-```
-git clone --recursive https://github.com/notshriram/OpenGL_Boilerplate
-```
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Screenshots](#screenshots)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
+
+## Features
+
+- Feature 1: Description of feature 1.
+- Feature 2: Description of feature 2.
+- Feature 3: Description of feature 3.
+- Feature 4: Description of feature 4.
+
+## Installation
 
 ### Prerequisites
 
-CMake 
-Visual Studio
+- C++17 or later
+- CMake 3.10 or later
+- Git
+- [ImGui](https://github.com/ocornut/imgui) (included as a submodule)
 
-### Installing
-* WINDOWS:
+### Steps
 
-After cloning the repository make a new folder with the name `build` and the nrun the command `cmake ..` inside the folder 
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/yourusername/tracker-app.git
+    cd tracker-app
+    ```
 
-```
-mkdir build
-cd build
-cmake ..
-```
-* LINUX
-```
-sudo apt-get install libx11-dev xrandr-dev
-mkdir build
-cd build
-cmake ..
-```
+2. Initialize and update submodules:
+    ```sh
+    git submodule update --init --recursive
+    ```
 
-## Authors
+3. Create a build directory and navigate into it:
+    ```sh
+    mkdir build
+    cd build
+    ```
 
-* **Shriram R** - *Initial work* - [notshriram](https://github.com/notshriram)
+4. Configure the project using CMake:
+    ```sh
+    cmake ..
+    ```
 
-## License
+5. Build the project:
+    ```sh
+    cmake --build .
+    ```
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+## Usage
+
+### Running the App
+
+Navigate to the build directory and execute the binary:
+```sh
+./tracker-app

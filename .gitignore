@@ -1,3 +1,94 @@
-build/
+# Ignore build directories
+/build/
+/Build/
 
-build
+# Ignore CMake build files
+CMakeFiles/
+/CMakeCache.txt
+cmake_install.cmake
+CMakeScripts/
+CTestTestfile.cmake
+Makefile
+
+# Ignore output binaries and libraries
+*.exe
+*.out
+*.app
+*.log
+*.obj
+*.o
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+
+# Ignore IDE specific files
+/.idea/
+/.vscode/
+*.code-workspace
+
+# Ignore generated documentation
+/docs/
+/doc/
+/*.html
+/*.pdf
+
+# Ignore backup and temporary files
+*~
+*.swp
+*.bak
+*.tmp
+*.temp
+
+# Ignore dependency folders
+/deps/
+/third_party/
+/external/
+
+# Ignore user-specific configuration files
+*.user
+*.user.*
+*.orig
+*.rej
+
+# Ignore other unnecessary files
+tags
+*.tags
+*.DS_Store
+*.directory
+
+# Ignore build logs
+*.log
+
+# Ignore compiled dynamic libraries
+*.dll
+*.so
+*.dylib
+
+# Ignore compiled object files
+*.o
+*.obj
+
+# Ignore generated files
+*.gen.*
+*.pb.*
+*.pb.h
+*.pb.cc
+
+# Ignore specific file extensions
+*.pyc
+*.pyo
+*.pdb
+*.idb
+*.DS_Store
+*.tgz
+*.gz
+*.rar
+*.zip
+*.7z
+*.tar
+
+# Ignore test and debugging files
+/tests
+/debug

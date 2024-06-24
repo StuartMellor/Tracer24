@@ -11,10 +11,10 @@ namespace ui {
 
 class Row {
    public:
-    Row(int cols, int rowId, int subCols, GLfloat width)
+    Row(int cols, int rowId, int subCols, GLfloat width, GLfloat displayWidth, GLfloat displayHeight, Tracer::Text& textRenderer)
         : m_cols(cols), m_rowId(rowId), m_subCols(subCols) {
         for (int i = 0; i < cols; ++i) {
-            m_cells.emplace_back(Cell({rowId, i}, subCols, i, width));
+            m_cells.emplace_back(Cell({rowId, i}, subCols, i, width, displayWidth, displayHeight, textRenderer));
         }
     }
 

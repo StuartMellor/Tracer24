@@ -13,11 +13,11 @@ namespace ui {
 class Grid {
    public:
     Grid() = default;
-    Grid(const Tracer::TracerData& TracerData, int windowWidth)
+    Grid(const Tracer::TracerData& TracerData, int windowWidth, int windowHeight, Tracer::Text& textRenderer)
         : m_tracerData(const_cast<Tracer::TracerData*>(&TracerData)) {
         GLfloat cellWidth = static_cast<GLfloat>(windowWidth) / m_tracerData->cols;
         for (int i = 0; i < m_tracerData->rows; ++i) {
-            m_rowUI.emplace_back(m_tracerData->cols, i, m_tracerData->subCols, cellWidth);
+            m_rowUI.emplace_back(m_tracerData->cols, i, m_tracerData->subCols, cellWidth, windowWidth, windowHeight, textRenderer);
         }
     }
 

@@ -16,10 +16,10 @@ struct CellState {
 
 class Cell {
    public:
-    Cell(const CellPos& cellPos, int numCellBlocks, int cellIndex, GLfloat width)
+    Cell(const CellPos& cellPos, int numCellBlocks, int cellIndex, GLfloat width, GLfloat displayWidth, GLfloat displayHeight, Tracer::Text& textRenderer)
         : m_cellIndex(cellIndex) {
         for (int i = 0; i < numCellBlocks; ++i) {
-            m_cellBlocks.emplace_back(CellBlock({cellPos.row, cellPos.col, i}, width));
+            m_cellBlocks.emplace_back(CellBlock({cellPos.row, cellPos.col, i}, width, displayWidth, displayHeight, textRenderer));
         }
     }
 

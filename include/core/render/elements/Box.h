@@ -10,8 +10,8 @@ class Box {
    public:
     Box() : m_width(0), m_height(0), m_x(0), m_y(0), m_color{0.0f, 0.0f, 0.0f} {}
 
-    Box(GLfloat width, GLfloat height, GLfloat x, GLfloat y, const std::array<float, 3>& color)
-        : m_width(width), m_height(height), m_x(x), m_y(y), m_color(color) {
+    Box(GLfloat width, GLfloat height, GLfloat x, GLfloat y, const std::array<float, 3>& color, const std::array<float, 3>& borderColor)
+        : m_width(width), m_height(height), m_x(x), m_y(y), m_color(color), m_borderColor(borderColor) {
     }
 
     void render();
@@ -31,16 +31,17 @@ class Box {
         m_borderOpacity = borderOpacity;
     }
 
-   private:
     GLfloat m_width;
     GLfloat m_height;
     GLfloat m_x;
     GLfloat m_y;
+
+   private:
     std::array<float, 3> m_color;
     std::array<float, 3> m_borderColor;
     float m_opacity = 1.0f;
     bool m_filled = true;
-    bool m_outlined = false;
+    bool m_outlined = true;
     bool m_rounded = false;
     float m_radius = 0;
     float m_borderThickness = 1.0f;

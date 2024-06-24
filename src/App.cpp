@@ -23,11 +23,11 @@ void checkGLError(const char *stmt, const char *fname, int line) {
         checkGLError(#stmt, __FILE__, __LINE__); \
     } while (0)
 
-void App::init(int windowWidth, int windowHeight) {
+void App::init(int windowWidth, int windowHeight, Tracer::Text &text_renderer) {
     m_settings = Tracer::config::Settings();
     Tracer::TracerData tracerData = Tracer::TracerData();
 
-    m_grid = Tracer::ui::Grid(tracerData, windowWidth);
+    m_grid = Tracer::ui::Grid(tracerData, windowWidth, windowHeight, text_renderer);
     m_input = Tracer::utils::Input();
 
     // Registering callbacks with the dispatcher
@@ -200,7 +200,11 @@ int App::run() {
     int windowWidth, windowHeight;
     glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
 
-    init(windowWidth, windowHeight);
+    Tracer::Text text_renderer = Tracer::Text("./assets/fonts/Roboto-Regular.ttf", windowWidth, windowHeight);
+    init(windowWidth, windowHeight, text_renderer);
+
+    const GLubyte *version = glGetString(GL_SHADING_LANGUAGE_VERSION);
+    std::cout << "GLSL Version: " << version << std::endl;
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();

@@ -27,11 +27,12 @@ class App {
     Tracer::ui::Grid m_grid;
     Tracer::GridState gridState;
     bool shiftPressed = false;
+    Tracer::Text m_text_renderer;
 
    private:
     Tracer::TracerStatusCode* m_status;
     void render();
-    void init(int windowWidth, int windowHeight);
+    void init(int windowWidth, int windowHeight, Tracer::Text& text_renderer);
     void HandleUtilKeyPress(int key, int scancode, int action, int mods);
     void HandleKeyInput(int key, int scancode, int action, int mods);
 

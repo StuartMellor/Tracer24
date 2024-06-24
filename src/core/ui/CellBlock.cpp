@@ -1,22 +1,23 @@
 #include "core/ui/CellBlock.h"
 
-#include <utils/types.h>
-
 #include <chrono>
 #include <cmath>
 
-#include "core/render/elements/Box.h"
-
 void Tracer::ui::CellBlock::render(bool isFocused, bool isBeingEdited, bool isRowActive) {
-    // if (isBeingEdited) {
-    //     auto now = std::chrono::steady_clock::now();
-    //     auto time = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
-    //     float alpha = static_cast<float>(sin(time * 0.01) * 0.1 + 0.7);
-    // } else if (isFocused && !isRowActive) {
-    //     auto now = std::chrono::steady_clock::now();
-    //     auto time = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
-    //     float alpha = static_cast<float>(sin(time * 0.007) * 0.1 + 0.6);
-    // } else {
-    // }
+    // Render the box
     m_box.render();
+
+    // Save the current OpenGL state
+    GLint lastProgram;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &lastProgram);
+
+    // Render the text
+    glUseProgram(m_text_renderer.getShaderProgram());  // Activate text shader program
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    m_text_renderer.render("00", m_box.m_x + m_cellBlockLoc.sub * 3.0f, m_box.m_y, 0.3f, glm::vec3(1.0, 1.0f, 1.0f));
+    glDisable(GL_BLEND);
+
+    // Restore the previous OpenGL state
+    glUseProgram(lastProgram);
 }

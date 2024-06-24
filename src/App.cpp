@@ -6,26 +6,28 @@
 
 #include "core/clock.h"
 #include "core/events/KeyboardEvent.h"
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-#include "imgui_internal.h"
 
 const char *glsl_version = "#version 130";
 
-App::App(Tracer::TracerStatusCode *status)
-    : dispatcher(), m_status(status), m_cursorPos({0, 0, 0}) {}
-
-App::~App() {}
-
-void App::render() {
-    m_grid.render(m_cursorPos, gridState);
+void checkGLError(const char *stmt, const char *fname, int line) {
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR) {
+        std::cerr << "OpenGL error " << err << ", at " << stmt << " in " << fname << " on line " << line << std::endl;
+        exit(1);
+    }
 }
 
-void App::init() {
+#define GL_CHECK(stmt)                           \
+    do {                                         \
+        stmt;                                    \
+        checkGLError(#stmt, __FILE__, __LINE__); \
+    } while (0)
+
+void App::init(int windowWidth, int windowHeight) {
     m_settings = Tracer::config::Settings();
     Tracer::TracerData tracerData = Tracer::TracerData();
-    m_grid = Tracer::ui::Grid(tracerData);
+
+    m_grid = Tracer::ui::Grid(tracerData, windowWidth);
     m_input = Tracer::utils::Input();
 
     // Registering callbacks with the dispatcher
@@ -37,7 +39,7 @@ void App::init() {
     dispatcher.registerCallback(GLFW_KEY_ESCAPE, [this](int key, int scancode, int action, int mods) { HandleUtilKeyPress(key, scancode, action, mods); });
 }
 
-void App::HandleUtilKeyPress(int key, int scancode, int action, int mods) {
+void App::HandleUtilKeyPress(int key, int /*scancode*/, int action, int /*mods*/) {
     if (key == GLFW_KEY_ENTER) {
         if (action == GLFW_PRESS) {
             // Reset to first block within cell:
@@ -135,95 +137,75 @@ void App::moveCursor(int colMove, int rowMove) {
     }
 }
 
+void App::render() {
+    // Clear the screen with a background color
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);                // Black background
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear both color and depth buffer
+
+    // Set up the viewport
+    int display_w, display_h;
+    glfwGetFramebufferSize(glfwGetCurrentContext(), &display_w, &display_h);
+    glViewport(0, 0, display_w, display_h);
+
+    // Set up the projection matrix
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, display_w, display_h, 0, -1, 1);  // Y axis goes down
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    // Render the grid (which includes the boxes)
+    m_grid.render(m_cursorPos, gridState);
+
+    // Swap buffers to display the rendered frame
+    glfwSwapBuffers(glfwGetCurrentContext());
+}
+
 int App::run() {
-    init();
     GLFWwindow *window;
 
-    if (!glfwInit())
+    if (!glfwInit()) {
+        std::cerr << "GLFW initialization failed" << std::endl;
         return -1;
+    }
 
     // Get the primary monitor
     GLFWmonitor *primaryMonitor = glfwGetPrimaryMonitor();
     const GLFWvidmode *mode = glfwGetVideoMode(primaryMonitor);
 
     // Create a window with the desired width and height
-    window = glfwCreateWindow(mode->width, mode->height, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(mode->width, mode->height, "Hello World", nullptr, nullptr);
 
     if (!window) {
         glfwTerminate();
-        std::cerr << "Glfw init fail";
+        std::cerr << "GLFW window creation failed" << std::endl;
         return -1;
     }
 
     // Maximize the window
     glfwMaximizeWindow(window);
-
     glfwMakeContextCurrent(window);
 
     if (glewInit() != GLEW_OK) {
-        std::cerr << "Glew init fail";
+        std::cerr << "GLEW initialization failed" << std::endl;
         return -1;
     }
+
+    // Enable V-Sync
+    glfwSwapInterval(1);
 
     glfwSetWindowUserPointer(window, this);
     glfwSetKeyCallback(window, Tracer::events::KeyboardEvent::key_callback);
 
-    ImGui::CreateContext();
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init(glsl_version);
+    int windowWidth, windowHeight;
+    glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
 
-    // Set custom style colors
-    ImGuiStyle &style = ImGui::GetStyle();
-    style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);      // Dark color for menu bar background
-    style.Colors[ImGuiCol_Header] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);         // Dark color for header
-    style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);  // Slightly lighter for hovered items
-    style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);   // Even lighter for active items
-
-    ImVec4 clear_color = ImColor(0x49, 0xA6, 0x95);
+    init(windowWidth, windowHeight);
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        int win_width, win_height;
-        glfwGetWindowSize(window, &win_width, &win_height);
-        ImGui::SetNextWindowSize(ImVec2(static_cast<float>(win_width), static_cast<float>(win_height)), ImGuiCond_Always);
-
-        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-        ImGui::Begin("MainWindow", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus);
-
-        // Add menu bar
-        if (ImGui::BeginMenuBar()) {
-            if (ImGui::BeginMenu("File")) {
-                if (ImGui::MenuItem("Exit")) {
-                    glfwSetWindowShouldClose(window, GLFW_TRUE);
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenuBar();
-        }
-
         render();
-
-        ImGui::End();
-
-        ImGui::Render();
-        int display_w, display_h;
-        glfwGetFramebufferSize(window, &display_w, &display_h);
-        glViewport(0, 0, display_w, display_h);
-        glClear(GL_COLOR_BUFFER_BIT);
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        glfwSwapBuffers(window);
     }
-
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
 
     glfwDestroyWindow(window);
     glfwTerminate();

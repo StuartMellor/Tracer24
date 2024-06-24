@@ -13,7 +13,6 @@
 class App {
    public:
     App(Tracer::TracerStatusCode* status) : dispatcher(), m_settings(), m_cursorPos() {}
-    ~App();
     int run();
     Tracer::config::Settings m_settings;
 
@@ -24,15 +23,15 @@ class App {
     void moveCursor(int colMove, int rowMove);
 
    public:
-    Tracer::CursorPos m_cursorPos;
-    Tracer::ui::Grid m_grid = Tracer::ui::Grid(Tracer::TracerData());
+    Tracer::CellBlockPos m_cursorPos;
+    Tracer::ui::Grid m_grid;
     Tracer::GridState gridState;
     bool shiftPressed = false;
 
    private:
     Tracer::TracerStatusCode* m_status;
     void render();
-    void init();
+    void init(int windowWidth, int windowHeight);
     void HandleUtilKeyPress(int key, int scancode, int action, int mods);
     void HandleKeyInput(int key, int scancode, int action, int mods);
 

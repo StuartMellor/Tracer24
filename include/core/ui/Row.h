@@ -11,14 +11,14 @@ namespace ui {
 
 class Row {
    public:
-    Row(int cols, unsigned int rowId, int subCols)
+    Row(int cols, int rowId, int subCols, GLfloat width)
         : m_cols(cols), m_rowId(rowId), m_subCols(subCols) {
-        for (int i = 0; i < m_cols; ++i) {
-            m_cells.emplace_back(m_subCols, i);
+        for (int i = 0; i < cols; ++i) {
+            m_cells.emplace_back(Cell({rowId, i}, subCols, i, width));
         }
     }
 
-    void render(int rowIndex, const CursorPos& cursorPos, bool rowSelected, unsigned int toggledCellRow, unsigned int toggledCellCol);
+    void render(int rowIndex, const CellBlockPos& cursorPos, bool rowSelected, unsigned int toggledCellRow, unsigned int toggledCellCol);
 
    private:
     int m_cols;

@@ -1,6 +1,7 @@
 #ifndef TRACER_UI_GRID_H
 #define TRACER_UI_GRID_H
 
+#include <iostream>
 #include <vector>
 
 #include "core/ui/Row.h"
@@ -11,14 +12,16 @@ namespace ui {
 
 class Grid {
    public:
-    Grid(const Tracer::TracerData& TracerData)
+    Grid() = default;
+    Grid(const Tracer::TracerData& TracerData, int windowWidth)
         : m_tracerData(const_cast<Tracer::TracerData*>(&TracerData)) {
+        GLfloat cellWidth = static_cast<GLfloat>(windowWidth) / m_tracerData->cols;
         for (int i = 0; i < m_tracerData->rows; ++i) {
-            m_rowUI.emplace_back(m_tracerData->cols, i, m_tracerData->subCols);
+            m_rowUI.emplace_back(m_tracerData->cols, i, m_tracerData->subCols, cellWidth);
         }
-    };
+    }
 
-    void render(const CursorPos& cursorPos, GridState& gridState);
+    void render(const CellBlockPos& cursorPos, GridState& gridState);
     void toggleCell(GridState& gridState, int row, int col);
     bool cellToggled(const GridState& gridState) const;
 

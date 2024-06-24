@@ -6,10 +6,19 @@
 
 namespace Tracer {
 
-struct CursorPos {
+struct CellBlockPos {
     int col;
     int row;
     int sub;
+};
+
+struct CellPos {
+    int col;
+    int row;
+};
+
+struct RowPos {
+    int row;
 };
 
 struct CellData {
@@ -26,9 +35,9 @@ struct GridState {
 };
 
 struct TracerData {
-    int rows = 16;
+    int rows = 32;
     int cols = 4;
-    int subCols = 3;
+    int subCols = 4;
     std::vector<RowData> cellData;
     std::string fileName;
     time_t lastModified;

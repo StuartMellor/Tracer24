@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "CellBlock.h"
-#include "imgui.h"
 #include "utils/types.h"
 
 namespace Tracer {
@@ -17,14 +16,14 @@ struct CellState {
 
 class Cell {
    public:
-    Cell(int numCellBlocks, int cellIndex)
+    Cell(const CellPos& cellPos, int numCellBlocks, int cellIndex, GLfloat width)
         : m_cellIndex(cellIndex) {
         for (int i = 0; i < numCellBlocks; ++i) {
-            m_cellBlocks.emplace_back();
+            m_cellBlocks.emplace_back(CellBlock({cellPos.row, cellPos.col, i}, width));
         }
     }
 
-    void render(const CellState& cellState, const CursorPos& cursorPos);
+    void render(const CellPos& cellLoc, const CellState& cellState, const CellBlockPos& cursorPos);
 
    private:
     int m_cellIndex;
